@@ -42,6 +42,18 @@ export default function RootLayout({ children }) {
   >
     Register Vehicle |
   </Link>
+  <Link 
+    href="/About" 
+    className="text-white hover:text-blue-500 font-poppins font-semibold text-lg transition-colors duration-300 ease-in-out"
+  >
+    About Us |
+  </Link>
+  <Link 
+    href="/Contact" 
+    className="text-white hover:text-blue-500 font-poppins font-semibold text-lg transition-colors duration-300 ease-in-out"
+  >
+    Contact Us |
+  </Link>
 </div>
 
 

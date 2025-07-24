@@ -1,23 +1,35 @@
 import { NextResponse } from "next/server";
 
-const items = [{
-    id:1 , name :"hijack"
-}];
+const items = [];
 
-export function GET(){
-    return NextResponse.json({items});
+export function GET() {
+  return NextResponse.json({ items });
 }
 
 export async function POST(req) {
-  const item = await req.json();
+  const { name, email, message } = await req.json();
 
-  if (!item.name) {
-    return NextResponse.json({ success: false, message: "Name is required" });
+  
+  if (!name || !email || !message) {
+    return NextResponse.json(
+      { success: false, message: "All fields are required" },
+      { status: 400 }
+    );
   }
 
-  // Assign a new ID and push the item
-  item.id = items.length + 1;
-  items.push(item);
+  const newItem = {
+    id: items.length + 1,
+    name,
+    email,
+    message,
+    timestamp: new Date().toISOString(),
+  };
 
-  return NextResponse.json({ success: true, message: "Saved successfully", item });
+  items.push(newItem);
+
+  return NextResponse.json({
+    success: true,
+    message: "Feedback submitted successfully",
+    item: newItem,
+  });
 }
