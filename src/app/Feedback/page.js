@@ -12,7 +12,7 @@ export default function FeedbackForm() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-np
+
     const res = await fetch('/api/fetch', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -27,9 +27,9 @@ np
   };
 
   return (
-    <div style={{ maxWidth: '400px', margin: '2rem auto' }}>
-      <h2>Submit Feedback</h2>
-      <form onSubmit={handleSubmit}>
+    <div style={{ maxWidth: '600px', margin: '2rem auto' }}>
+      <h2 className='text-white hover:text-yellow-400 font-medium bg-blue-500 p-2'>Submit Feedback</h2>
+      <form  className= "p-4 mx-auto bg-white rounded shadow-md mt-6" onSubmit={handleSubmit}>
         <input
           type="text"
           name="name"
@@ -38,6 +38,7 @@ np
           onChange={handleChange}
           required
           style={{ display: 'block', marginBottom: '10px', width: '100%' }}
+         className="border bg-gray-200 text-gray-700"
         />
         <input
           type="email"
@@ -47,6 +48,8 @@ np
           onChange={handleChange}
           required
           style={{ display: 'block', marginBottom: '10px', width: '100%' }}
+                   className="border bg-gray-200 text-gray-700"
+
         />
         <textarea
           name="message"
@@ -55,8 +58,10 @@ np
           onChange={handleChange}
           required
           style={{ display: 'block', marginBottom: '10px', width: '100%' }}
+                   className="border bg-gray-200 text-gray-700"
+
         />
-        <button type="submit">Submit</button>
+        <button className='mt-4 px-4 py-1 bg-green-600 text-white rounded hover:bg-green-700' type="submit">Submit</button>
       </form>
       {response && (
         <p style={{ marginTop: '1rem', color: response.success ? 'green' : 'red' }}>

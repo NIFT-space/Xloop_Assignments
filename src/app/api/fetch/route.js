@@ -1,15 +1,16 @@
 import { NextResponse } from "next/server";
+import dbConnect from "@/Util/db";
+import FormSubmission from "@/model/FormSubmit";
 
-const items = [];
-
-export function GET() {
+export async function GET() {
+  await dbConnect();
+  const items = await FormSubmission.find().sort({ createdAt: -1 }).lean();
   return NextResponse.json({ items });
 }
 
 export async function POST(req) {
   const { name, email, message } = await req.json();
 
-  
   if (!name || !email || !message) {
     return NextResponse.json(
       { success: false, message: "All fields are required" },
@@ -17,15 +18,9 @@ export async function POST(req) {
     );
   }
 
-  const newItem = {
-    id: items.length + 1,
-    name,
-    email,
-    message,
-    timestamp: new Date().toISOString(),
-  };
+  await dbConnect();
 
-  items.push(newItem);
+  const newItem = await FormSubmission.create({ name, email, message });
 
   return NextResponse.json({
     success: true,
