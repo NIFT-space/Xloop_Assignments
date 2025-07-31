@@ -3,7 +3,8 @@ import dbConnect from "@/Util/db";
 import User from "@/model/User";
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-import cookie from 'cookie';
+import { NextResponse } from 'next/server';
+import { serialize } from 'cookie';
 
 export async function POST(req) {
   try {
@@ -37,24 +38,16 @@ export async function POST(req) {
       { expiresIn: '1h' } // Token expiry time
     );
 
-    // Set the token as a cookie
-    const serialized = cookie.serialize('auth_token', token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      maxAge: 60 * 60, // 1 hour
-      path: '/',
-    });
+    const response = NextResponse.json({ success: true });
 
-    // Return the response with the cookie set
-    return new Response(
-      JSON.stringify({ message: 'Login successful!' }),
-      {
-        status: 200,
-        headers: {
-          'Set-Cookie': serialized,
-        },
-      }
-    );
+  response.headers.set('Set-Cookie', serialize('auth_token', token, {
+    httpOnly: true,
+    secure: true,
+    path: '/',
+    sameSite: 'strict',
+    maxAge: 60 * 60 * 24, // 1 day
+  }));
+  return response;
   } catch (error) {
     console.error('Error in login API:', error);
     return new Response(

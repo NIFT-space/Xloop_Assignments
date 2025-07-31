@@ -3,8 +3,9 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation'; // Import useRouter
 import jwt from 'jsonwebtoken';
-import cookie from 'cookie';
-import Cookies from 'js-cookie'; // Import js-cookie
+//import cookie from 'cookie';
+import { cookies } from 'next/headers';
+
 
 
 
@@ -13,63 +14,60 @@ export default function HomePage() {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(true);
 
-  // Logout function to clear the token and redirect
+  // Logout
   const logout = async () => {
     setIsLoading(true);
     try {
-      // Call the logout API to clear the token cookie
+      // clear the token cookie
       const res = await fetch('/api/logout');
       if (res.ok) {
-        // Redirect to login page after successful logout
+        // Redirect to login page
         router.push('/Login');
       } else {
         alert('Logout failed, please try again.');
       }
     } catch (error) {
-      console.error('Error during logout:', error);
+      console.error('Error :', error);
       alert('Logout failed, please try again.');
     } finally {
       setIsLoading(false);
     }
   };
 
-  // Check for token and user authentication
   useEffect(() => {
-    //const cookies = document.cookie || '';
-    //const token = cookies.split('; ').find(row => row.startsWith('auth_token='));
-    const token = Cookies.get('auth_token'); // Fetch the token using js-cookie
-    
+    const cookieStore = cookies();
+    const token = cookieStore.get('auth_token')?.value;    
 
     if (token) {
       const tokenValue = token.split('=')[1];
-      console.log('Found token:', tokenValue); // Log the token value
+      console.log('Found token:', tokenValue); 
 
       try {
-        const decoded = jwt.decode(tokenValue); // Decode JWT to get user info
-        console.log('Decoded token:', decoded); // Log the decoded token
+        const decoded = jwt.decode(tokenValue); 
+        console.log('Decoded token:', decoded); 
 
         if (decoded && decoded.email) {
           setUser(decoded);
         } else {
-          setUser(null); // If no valid user data is found, clear user state
+          setUser(null); 
         }
       } catch (error) {
         console.error('Invalid token:', error);
-        setUser(null); // If there's an error decoding, clear user state
+        setUser(null); 
       }
     } else {
-      console.log('No token found in cookies'); // Log if no token is found
-      setUser(null); // No token found, clear user state
+      console.log('No token found in cookies'); 
+      setUser(null); 
     }
 
-    setIsLoading(false); // Set loading to false after the check is complete
+    setIsLoading(false); 
   }, []);
 
   // Redirect to login page if no user is found
   useEffect(() => {
     if (!isLoading && !user) {
-      console.log('Redirecting to login'); // Log the redirection
-      router.push('Login'); // Redirect to login if no user is found
+      console.log('Redirecting to login'); 
+      router.push('Login'); 
     }
   }, [isLoading, user, router]);
 
