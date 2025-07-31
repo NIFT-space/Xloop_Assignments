@@ -1,11 +1,12 @@
-// app/register/page.js
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 
-export default function RegisterPage() {
-  const [form, setForm] = useState({ name: '', email: '', password: '',role: '' });
+export default function LoginPage() {
+  const [form, setForm] = useState({ email: '', password: '' });
   const [status, setStatus] = useState(null);
+  const router = useRouter(); // Initialize the router
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -15,13 +16,13 @@ export default function RegisterPage() {
     e.preventDefault();
 
     // Basic Validation
-    if (!form.name || !form.email || !form.password || !form.role) {
+    if (!form.email || !form.password) {
       setStatus('Please fill in all fields.');
       return;
     }
 
-    // Send data to the API route for registration
-    const res = await fetch('/api/register', {
+    // Send data to the API route for login
+    const res = await fetch('/api/login', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(form),
@@ -29,21 +30,19 @@ export default function RegisterPage() {
 
     const data = await res.json();
     setStatus(data.message);
+
+    // If login is successful, redirect to the home page
+    if (res.status === 200) {
+      setTimeout(() => {
+        router.push('/'); // Redirect to home page after a short delay
+      }, 1000); // Optional: Delay the redirect to show the success message first
+    }
   };
 
   return (
     <div className="max-w-md mx-auto p-6 bg-white rounded-md shadow-md">
-      <h1 className="text-2xl font-semibold text-center mb-6">Create Account</h1>
+      <h1 className="text-2xl font-semibold text-center mb-6">Login</h1>
       <form onSubmit={handleSubmit} className="space-y-4">
-        <input
-          name="name"
-          value={form.name}
-          onChange={handleChange}
-          type="text"
-          placeholder="Your Name"
-          required
-          className="w-full p-3 border rounded-md"
-        />
         <input
           name="email"
           value={form.email}
@@ -62,20 +61,11 @@ export default function RegisterPage() {
           required
           className="w-full p-3 border rounded-md"
         />
-        <input
-          name="role"
-          value={form.role}
-          onChange={handleChange}
-          type="text"
-          placeholder="Your Role"
-          required
-          className="w-full p-3 border rounded-md"
-        />
         <button
           type="submit"
           className="w-full bg-blue-500 text-white p-3 rounded-md hover:bg-blue-600"
         >
-          Register
+          Login
         </button>
       </form>
 
@@ -85,17 +75,3 @@ export default function RegisterPage() {
     </div>
   );
 }
-
-
-// import Form from "@/Components/Form";
-
-// export default function(){
-
-//     return(
-
-//         <>
-
-//         <Form></Form>
-//         </>
-//     );
-// }

@@ -1,11 +1,23 @@
-import mongoose  from "mongoose";
-import { string } from "yup";
+// lib/models/User.js
+import mongoose from 'mongoose';
 
-const userSchema = new mongoose.Schema({
+const UserSchema = new mongoose.Schema({
+  name: {
+    type: String,
+    required: true,
+  },
+  email: {
+    type: String,
+    required: true,
+    unique: true,
+  },
+  password: {
+    type: String,
+    required: true,
+  },
+  role: { type: String, default: "user" },
+});
 
-    name :string,
-    email: {type:string, unique:true}
+const User = mongoose.models.User || mongoose.model('User', UserSchema);
 
-})
-
-export default mongoose.models.User || mongoose.User
+export default User

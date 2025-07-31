@@ -9,7 +9,11 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "bcryptjs": "^3.0.2",
+    "cookie": "^1.0.2",
     "formik": "^2.4.6",
+    "js-cookie": "^3.0.5",
+    "jsonwebtoken": "^9.0.2",
     "mongodb": "^6.18.0",
     "mongoose": "^8.16.4",
     "next": "15.3.5",
