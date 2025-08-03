@@ -1,32 +1,32 @@
-// middleware.js
 import jwt from 'jsonwebtoken';
 import cookie from 'cookie';
 
 export function middleware(req) {
-  const { cookies } = req;
+  const cookies = cookie.parse(req.headers.get('cookie') || ''); // Parse cookies from the request
   const token = cookies.auth_token;
 
   // If there's no token, redirect to the login page
   if (!token) {
-    return new Response(
-      JSON.stringify({ message: 'Unauthorized' }),
-      { status: 401, headers: { Location: '/login' } }
-    );
+    return Response.redirect(new URL('/login', req.url), 302); // Use Response.redirect for redirection
   }
 
   try {
     // Verify the token using the secret key
-    jwt.verify(token, process.env.JWT_SECRET_KEY);
-    return; // Continue with the request if the token is valid
+    const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
+
+    // Check if the user has an 'admin' role
+    if (decoded.role !== 'admin') {
+      return Response.redirect(new URL('/login', req.url), 302); // Redirect to login if not admin
+    }
+
+    return; // Continue with the request if the token is valid and user is admin
   } catch (error) {
-    return new Response(
-      JSON.stringify({ message: 'Invalid or expired token' }),
-      { status: 401, headers: { Location: '/login' } }
-    );
+    console.error('Invalid token or expired token', error);
+    return Response.redirect(new URL('/login', req.url), 302); // Redirect to login if token is invalid
   }
 }
 
-// Apply this middleware to protect the Home page and any other pages you want
+// Protect the admin route
 export const config = {
-  matcher: ['/home', '/dashboard'], // Apply to these routes
+  matcher: ['/admin', '/admin/**'], // Protect the /admin route and its sub-routes
 };

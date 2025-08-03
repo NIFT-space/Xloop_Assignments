@@ -38,16 +38,24 @@ export async function POST(req) {
       { expiresIn: '1h' } // Token expiry time
     );
 
-    const response = NextResponse.json({ success: true });
+    // Set the token as a cookie
+    const serialized = cookie.serialize('auth_token', token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      maxAge: 60 * 60, // 1 hour
+      path: '/',
+    });
 
-  response.headers.set('Set-Cookie', serialize('auth_token', token, {
-    httpOnly: true,
-    secure: true,
-    path: '/',
-    sameSite: 'strict',
-    maxAge: 60 * 60 * 24, // 1 day
-  }));
-  return response;
+    // Return the response with the cookie set
+    return new Response(
+      JSON.stringify({ message: 'Login successful!' }),
+      {
+        status: 200,
+        headers: {
+          'Set-Cookie': serialized,
+        },
+      }
+    );
   } catch (error) {
     console.error('Error in login API:', error);
     return new Response(

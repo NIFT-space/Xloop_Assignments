@@ -1,7 +1,14 @@
+'use client';
+
 import React from 'react';
 import LatestModel from '@/Components/Cars';
+import cookie from 'cookie';
 
 const AutomobilePage = () => {
+
+  const cookies = document.cookie || '';
+  const token = cookies.split('; ').find(row => row.startsWith('auth_token'));
+  console.log('Token:', token); // Log the token for debugging
   return (
     <div style={{ padding: '20px', maxWidth: '1200px', margin: '0 auto' }}>
       <h1 style={{ textAlign: 'center', marginBottom: '30px' }}>Welcome to the Latest Car Models Showroom</h1>
